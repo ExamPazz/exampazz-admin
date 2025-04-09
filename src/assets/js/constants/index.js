@@ -1,13 +1,18 @@
+const devAdminUrl = "dev-admin.exampazz.com";
+const stagingAdminUrl = "staging-admin.exampazz.com";
+const prodAdminUrl = "admin.exampazz.com";
+
 const hostname = window.location.hostname;
 const isDevelopment =
-  hostname.includes("dev.exampazz.com") || hostname.includes("localhost");
+  hostname.includes(devAdminUrl) || hostname.includes("localhost");
+const isStaging = hostname.includes(stagingAdminUrl) || !isDevelopment;
 const isProduction =
-  hostname.includes("exampazz.com") && !hostname.includes(".exampazz.com");
-
-console.log({ hostname, isDevelopment, isProduction });
+  hostname.includes(prodAdminUrl) && !isDevelopment && !isStaging;
 
 const BASE_URL = isProduction
   ? "https://api.exampazz.com"
+  : isStaging
+  ? "https://apistaging.exampazz.com"
   : "https://apidev.exampazz.com";
 
 const API_BASE_URL = `${BASE_URL}/api/v1/admin`;
@@ -22,4 +27,4 @@ const handleLogout = () => {
 };
 
 const logoutBtnElement = document.getElementById("logoutBtn");
-logoutBtnElement.addEventListener("click", handleLogout);
+logoutBtnElement?.addEventListener("click", handleLogout);
