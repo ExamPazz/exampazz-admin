@@ -5,7 +5,7 @@ const prodAdminUrl = "admin.exampazz.com";
 const hostname = window.location.hostname;
 const isDevelopment =
   hostname.includes(devAdminUrl) || hostname.includes("localhost");
-const isStaging = hostname.includes(stagingAdminUrl) || !isDevelopment;
+const isStaging = hostname.includes(stagingAdminUrl) && !isDevelopment;
 const isProduction =
   hostname.includes(prodAdminUrl) && !isDevelopment && !isStaging;
 
