@@ -31,9 +31,12 @@ const handleFetchDashboardStatistics = async () => {
       throw new Error(errorMsg);
     }
 
-    totalUsersElement.innerText = data?.data?.total_users || "N/A";
+    const totalUsers = data?.data?.total_users;
+    const standardSubscriptions = data?.data?.standard_subscriptions;
+
+    totalUsersElement.innerText = totalUsers === 0 ? 0 : totalUsers || "N/A";
     standardSubscriptionsElement.innerText =
-      data?.data?.standard_subscriptions || "N/A";
+      standardSubscriptions === 0 ? 0 : standardSubscriptions || "N/A";
   } catch (error) {
     const errorMessage = error?.message || "Error fetching data";
     Swal.fire({

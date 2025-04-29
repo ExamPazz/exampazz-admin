@@ -101,7 +101,8 @@
   },
   "scripts": {
     "build": "cd ./src && npx gulp build",
-    "serve": "cd ./src && npx gulp serve"
+    "serve": "cd ./src && npx gulp serve",
+    "dev": "cd ./src && npx gulp serve:lite"
   },
   "author": "bootstrapdash",
   "url": "http://www.bootstrapdash.com/",

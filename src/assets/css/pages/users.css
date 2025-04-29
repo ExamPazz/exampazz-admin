@@ -1,0 +1,81 @@
+@import url("../config/index.css");
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  margin: 16px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+table {
+  width: 100%;
+  min-width: 600px;
+  border-collapse: collapse;
+  overflow: hidden;
+  border-radius: 8px;
+  table-layout: fixed; /* Equal column widths */
+  /* font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; */
+}
+
+thead {
+  background-color: #1b1b29;
+  color: white;
+}
+
+thead th {
+  padding: 12px 16px;
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+tbody tr:hover {
+  background-color: #f1f5ff;
+  transition: background-color 0.2s ease-in-out;
+}
+
+tbody td {
+  padding: 12px 16px;
+  font-size: 14px;
+  color: #333;
+  word-wrap: break-word;
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 16px;
+  gap: 8px;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  background-color: #ffffff;
+  color: #1b1b29;
+  border: 1px solid #1b1b29;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.page-btn.active {
+  background-color: #1b1b29;
+  color: white;
+}
+
+.page-btn:hover {
+  background-color: #1b1b29aa;
+}
+
+/* Optional: Responsive font sizes */
+@media (max-width: 768px) {
+  thead th,
+  tbody td {
+    padding: 10px;
+    font-size: 13px;
+  }
+}
