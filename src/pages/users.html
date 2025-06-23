@@ -112,6 +112,17 @@
         <div class="main-panel">
           <div class="content-wrapper">
             <div class="row">
+              <form id="searchForm" class="search-input-div">
+                <input
+                  class="search-input"
+                  id="searchInput"
+                  placeholder="Search..."
+                  type="search"
+                />
+                <button type="submit" class="btn btn-primary">Search</button>
+              </form>
+            </div>
+            <div class="row">
               <div class="col-12">
                 <div class="row">
                   <div class="table-container">
@@ -123,6 +134,7 @@
                           <th>Phone number</th>
                           <th>Gender</th>
                           <th>Subscriptions</th>
+                          <th>Actions</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -153,6 +165,86 @@
         </div>
         <!-- main-panel ends -->
       </div>
+
+      <!-- Delete user dialog -->
+      <dialog id="deleteUserDialog">
+        <h2 class="dialog_header">Delete User</h2>
+        <div class="dialog_footer">
+          <button id="deleteUserDialogYesBtn" class="btn btn-danger">
+            Yes
+          </button>
+          <button id="deleteUserDialogNoBtn" class="btn btn-primary">No</button>
+        </div>
+      </dialog>
+
+      <!-- Edit user dialog -->
+      <dialog id="editUserDialog" class="dialog-big">
+        <h2 class="dialog_header">Edit User</h2>
+        <form class="editUserDialog_form" id="editUserDialog_form">
+          <div class="form-group">
+            <label for="loginEmailField">Full Name</label>
+            <div class="input-group">
+              <input
+                class="form-control form-control-lg border-left-0"
+                id="editUserForm_fullName"
+                placeholder="Enter email"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginEmailField">Email</label>
+            <div class="input-group">
+              <input
+                type="email"
+                class="form-control form-control-lg border-left-0"
+                id="editUserForm_email"
+                placeholder="Enter email"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginEmailField">Phone Number</label>
+            <div class="input-group">
+              <input
+                type="tel"
+                class="form-control form-control-lg border-left-0"
+                id="editUserForm_phoneNumber"
+                placeholder="Enter email"
+              />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="loginEmailField">Gender</label>
+            <div class="input-group">
+              <select
+                type="email"
+                class="form-control form-control-lg border-left-0"
+                id="editUserForm_gender"
+                placeholder="Enter email"
+              >
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+              </select>
+            </div>
+          </div>
+          <div class="dialog_footer">
+            <button
+              type="submit"
+              id="editUserDialogSaveBtn"
+              class="btn btn-danger"
+            >
+              Save
+            </button>
+            <button
+              type="button"
+              id="editUserDialogCloseBtn"
+              class="btn btn-primary"
+            >
+              Close
+            </button>
+          </div>
+        </form>
+      </dialog>
       <!-- page-body-wrapper ends -->
     </div>
 

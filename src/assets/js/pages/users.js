@@ -3,7 +3,7 @@ const createErrorButton = () => {
   button.textContent = "Error fetching data. Retry";
   button.className = "error-btn";
   button.addEventListener("click", async () => {
-    await handleFetchUsers();
+    await handleFetchUsers(currentPage, search);
   });
 
   return button;
@@ -13,12 +13,29 @@ const mapUsersToTable = (users, usersTableElement) => {
   users.forEach((user) => {
     const row = document.createElement("tr");
 
+    const formattedFullName = user.full_name.split(" ").join("-");
+    const email = user.email || "N/A";
+    const phoneNumber = user.phone_number || "N/A";
+    const gender = user.gender || "N/A";
+    const subscription = user.subscription || "N/A";
+
     row.innerHTML = `
       <td>${user.full_name}</td>
-      <td>${user.email}</td>
-      <td>${user.phone_number}</td>
-      <td>${user.gender}</td>
-      <td>${user.subscription}</td>
+      <td>${email}</td>
+      <td>${phoneNumber}</td>
+      <td>${gender}</td>
+      <td>${subscription}</td>
+      <td class="table_row_action">
+        <div>
+        <button data-id=${user.email} 
+        data-email=${user.email} 
+        data-fullname=${formattedFullName}
+        data-phonenumber=${user.phone_number}
+        data-gender=${user.gender}
+        class="user-edit-button btn btn-sm btn-primary">Edit</button>
+        <button data-id=${user.email} class="user-delete-button btn btn-sm btn-danger">Delete</button>
+        </div>
+      </td>
     `;
 
     usersTableElement.appendChild(row);
@@ -27,17 +44,29 @@ const mapUsersToTable = (users, usersTableElement) => {
 
 const getPageFromUrl = () => {
   const params = new URLSearchParams(window.location.search);
-  return parseInt(params.get("page")) || 1;
+
+  const page = parseInt(params.get("page")) || 1;
+  const search = params.get("search") || "";
+
+  return { page, search };
 };
 
-const updateUrl = (page) => {
+const updatePageUrl = (page) => {
   const params = new URLSearchParams(window.location.search);
   params.set("page", page);
   history.pushState(null, "", `?${params.toString()}`);
 };
 
+const updateSearchUrl = (search) => {
+  const params = new URLSearchParams(window.location.search);
+  params.set("search", search);
+  history.pushState(null, "", `?${params.toString()}`);
+};
+
 const rowsPerPage = 20;
-let currentPage = getPageFromUrl();
+let selectedItem = null;
+let currentPage = getPageFromUrl().page;
+let search = getPageFromUrl().search;
 
 const setupPagination = (data) => {
   const pagination = document.getElementById("pagination");
@@ -52,9 +81,9 @@ const setupPagination = (data) => {
     if (page === currentPage) btn.classList.add("active");
     btn.addEventListener("click", () => {
       currentPage = page;
-      updateUrl(page);
+      updatePageUrl(page);
       setupPagination(data);
-      handleFetchUsers(page);
+      handleFetchUsers(page, search);
     });
     return btn;
   };
@@ -79,14 +108,14 @@ const setupPagination = (data) => {
   }
 };
 
-const handleFetchUsers = async (currentPage) => {
+const handleFetchUsers = async (currentPage, search) => {
   const usersTableElement = document.querySelector("#usersTable tbody");
 
   try {
     usersTableElement.innerText = "Loading...";
 
     const res = await fetch(
-      `${API_BASE_URL}/users/data?page=${currentPage}&per_page=${rowsPerPage}`,
+      `${API_BASE_URL}/users/data?page=${currentPage}&per_page=${rowsPerPage}&search=${search}`,
       {
         method: "GET",
         headers: { "Content-Type": "application/json" },
@@ -130,7 +159,117 @@ const handlePageLoad = async () => {
 
   adminNameElement.innerText = userName;
 
-  await handleFetchUsers(currentPage);
+  await handleFetchUsers(currentPage, search);
 };
 
-document.addEventListener("DOMContentLoaded", handlePageLoad);
+const handleSearchFormSubmit = (e, searchValue) => {
+  e.preventDefault();
+  handleFetchUsers(currentPage, searchValue);
+  updateSearchUrl(searchValue);
+};
+
+const handleSearchForm = async () => {
+  try {
+    const searchForm = document.getElementById("searchForm");
+    const searchInput = document.getElementById("searchInput");
+
+    searchForm.onsubmit = (e) => handleSearchFormSubmit(e, searchInput.value);
+  } catch (error) {}
+};
+
+const handleDeleteUser = async () => {
+  const deleteDialogYesBtn = document.getElementById("deleteUserDialogYesBtn");
+
+  deleteDialogYesBtn.onclick = async () => {
+    console.log({ selectedItem });
+  };
+};
+
+const handleOpenDeleteDialog = () => {
+  document.getElementById("usersTable").addEventListener("click", (e) => {
+    const deleteDialog = document.getElementById("deleteUserDialog");
+
+    if (e.target.classList.contains("user-delete-button")) {
+      selectedItem = {
+        id: e.target.dataset.id,
+      };
+      deleteDialog.showModal();
+    }
+  });
+};
+
+const handleCloseDeleteDialog = () => {
+  const deleteDialog = document.getElementById("deleteUserDialog");
+  const deleteDialogNoBtn = document.getElementById("deleteUserDialogNoBtn");
+  deleteDialogNoBtn.onclick = () => {
+    deleteDialog.close();
+  };
+};
+
+const handleEditUser = async () => {
+  const editDialogForm = document.getElementById("editUserDialog_form");
+
+  editDialogForm.onsubmit = async (e) => {
+    e.preventDefault();
+
+    const fullNameValue = document.getElementById(
+      "editUserForm_fullName"
+    ).value;
+    const emailValue = document.getElementById("editUserForm_email").value;
+    const phoneNumberValue = document.getElementById(
+      "editUserForm_phoneNumber"
+    ).value;
+    const genderValue = document.getElementById("editUserForm_gender").value;
+
+    console.log({ fullNameValue, emailValue, phoneNumberValue, genderValue });
+  };
+};
+
+const handleOpenEditDialog = () => {
+  document.getElementById("usersTable").addEventListener("click", (e) => {
+    const editDialog = document.getElementById("editUserDialog");
+
+    if (e.target.classList.contains("user-edit-button")) {
+      selectedItem = {
+        id: e.target.dataset.id,
+        email: e.target.dataset.email,
+        fullName: e.target.dataset.fullname,
+        gender: e.target.dataset.gender,
+        phoneNumber: e.target.dataset.phonenumber,
+      };
+      editDialog.showModal();
+
+      document.getElementById("editUserForm_fullName").value =
+        e.target.dataset.fullname.split("-").join(" ");
+      document.getElementById("editUserForm_email").value =
+        e.target.dataset.email;
+      document.getElementById("editUserForm_phoneNumber").value =
+        e.target.dataset.phonenumber;
+      document.getElementById("editUserForm_gender").value =
+        e.target.dataset.gender;
+    }
+  });
+};
+
+const handleCloseEditDialog = () => {
+  const editDialog = document.getElementById("editUserDialog");
+  const editDialogCloseBtn = document.getElementById("editUserDialogCloseBtn");
+  editDialogCloseBtn.onclick = () => {
+    editDialog.close();
+  };
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+  handlePageLoad();
+  handleSearchForm();
+
+  /** Delete functionalities */
+  handleDeleteUser();
+  handleOpenDeleteDialog();
+  handleCloseDeleteDialog();
+
+  /** Edit functionalities */
+  handleEditUser();
+  handleOpenEditDialog();
+  handleCloseEditDialog();
+});
